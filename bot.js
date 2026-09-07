@@ -1,9 +1,10 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-// BotFather မှ ရရှိသော Token ကို ထည့်ပါ
-const TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
-// အော်ဒါမက်ဆေ့ဂျ် လက်ခံလိုသည့် Admin ၏ Telegram ID (သို့မဟုတ်) Group ID
-const ADMIN_CHAT_ID = 'YOUR_ADMIN_CHAT_ID';
+// ၁။ BotFather မှ ရရှိထားသော Token
+const TOKEN = '8982203850:AAFWZQKhrYNBQix5qXJM0bv3J0-Fe_J1hUg';
+
+// ၂။ အထက်ပါ အဆင့် (၁) မှ ရရှိသော သင့် Telegram ID (ဥပမာ - 123456789)
+const ADMIN_CHAT_ID = '123456789';
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 
@@ -15,7 +16,7 @@ bot.onText(/\/start/, (msg) => {
             keyboard: [[
                 {
                     text: "🛍️ Open Shop",
-                    web_app: { url: "https://your-app-domain.vercel.app" } // သင် Hosting တင်ထားသော Web App URL ထည့်ပါ
+                    web_app: { url: "https://your-app-domain.vercel.app" } // သင့် Vercel Link အစားထိုးပါ
                 }
             ]],
             resize_keyboard: true

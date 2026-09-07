@@ -1,0 +1,50 @@
+const TelegramBot = require('node-telegram-bot-api');
+
+// BotFather မှ ရရှိသော Token ကို ထည့်ပါ
+const TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
+// အော်ဒါမက်ဆေ့ဂျ် လက်ခံလိုသည့် Admin ၏ Telegram ID (သို့မဟုတ်) Group ID
+const ADMIN_CHAT_ID = 'YOUR_ADMIN_CHAT_ID';
+
+const bot = new TelegramBot(TOKEN, { polling: true });
+
+// Web App မီနူး ခလုတ် ပြသပေးခြင်း
+bot.onText(/\/start/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, "မင်္ဂလာပါ၊ စျေးဝယ်ယူရန် အောက်ပါ ခလုတ်ကို နှိပ်ပါ -", {
+        reply_markup: {
+            keyboard: [[
+                {
+                    text: "🛍️ Open Shop",
+                    web_app: { url: "https://your-app-domain.vercel.app" } // သင် Hosting တင်ထားသော Web App URL ထည့်ပါ
+                }
+            ]],
+            resize_keyboard: true
+        }
+    });
+});
+
+// Web App မှ ပို့လိုက်သော အော်ဒါ အချက်အလက်များကို လက်ခံရယူခြင်း
+bot.on('message', (msg) => {
+    if (msg.web_app_data) {
+        try {
+            const order = JSON.parse(msg.web_app_data.data);
+            
+            const itemList = order.items.map(i => `- ${i.name}: ${i.price} KS`).join('\n');
+            const message = `🚨 **အော်ဒါအသစ် ရရှိပါသည်!**\n\n` +
+                            `👤 အမည်: ${order.customer.name}\n` +
+                            `📞 ဖုန်း: ${order.customer.phone}\n` +
+                            `📍 လိပ်စာ: ${order.customer.address}\n\n` +
+                            `🛒 **ဝယ်ယူသည့် ပစ္စည်းများ:**\n${itemList}\n\n` +
+                            `💰 **စုစုပေါင်း ကျသင့်ငွေ:** ${order.total.toLocaleString()} KS`;
+
+            // ဝယ်ယူသူထံ အတည်ပြုချက် ပို့ပေးခြင်း
+            bot.sendMessage(msg.chat.id, `ကျေးဇူးတင်ပါသည် ${order.customer.name}၊ သင့်အော်ဒါကို လက်ခံရရှိပါပြီ!`);
+            
+            // Admin ထံသို့ အော်ဒါအသေးစိတ် မက်ဆေ့ဂျ် ပို့ပေးခြင်း
+            bot.sendMessage(ADMIN_CHAT_ID, message, { parse_mode: 'Markdown' });
+
+        } catch (e) {
+            console.error("Data parse error:", e);
+        }
+    }
+});

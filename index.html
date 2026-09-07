@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Online Shop</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); margin: 0; padding: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { border: 1px solid #ccc; padding: 10px; border-radius: 8px; text-align: center; }
+        .card img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; }
+        .btn { background: #2481cc; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 5px; }
+        .form-group { margin-top: 15px; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        #checkout { margin-top: 20px; display: none; border-top: 2px solid #ddd; padding-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>🛍️ Online Store</h2>
+    <div class="grid" id="product-list"></div>
+
+    <div id="checkout">
+        <h3>🛒 Order Form</h3>
+        <p>ရွေးချယ်ထားသော ပစ္စည်းများ: <b id="cart-summary"></b></p>
+        <p>စုစုပေါင်း ကျသင့်ငွေ: <b id="total-price">0</b> KS</p>
+        
+        <div class="form-group">
+            <label>အမည်:</label>
+            <input type="text" id="name" placeholder="သင့်အမည် ရိုက်ထည့်ပါ">
+        </div>
+        <div class="form-group">
+            <label>ဖုန်းနံပါတ်:</label>
+            <input type="tel" id="phone" placeholder="09xxxxxxxxx">
+        </div>
+        <div class="form-group">
+            <label>ပို့ဆောင်ရမည့် လိပ်စာ:</label>
+            <textarea id="address" rows="3" placeholder="မြို့နယ် နှင့် လိပ်စာ အပြည့်အစုံ"></textarea>
+        </div>
+        <button class="btn" onclick="submitOrder()" style="margin-top: 15px; background: #28a745;">အော်ဒါ အတည်ပြုမည်</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Telegram Window ကို အပြည့်ဖွင့်မည်
+
+        const products = [
+            { id: 1, name: "T-Shirt", price: 15000, img: "https://via.placeholder.com/150" },
+            { id: 2, name: "Sneakers", price: 45000, img: "https://via.placeholder.com/150" },
+            { id: 3, name: "Backpack", price: 30000, img: "https://via.placeholder.com/150" }
+        ];
+
+        let cart = [];
+
+        function renderProducts() {
+            const list = document.getElementById('product-list');
+            list.innerHTML = products.map(p => `
+                <div class="card">
+                    <img src="${p.img}">
+                    <h4>${p.name}</h4>
+                    <p>${p.price.toLocaleString()} KS</p>
+                    <button class="btn" onclick="addToCart(${p.id})">ဝယ်ယူမည်</button>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            cart.push(item);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('checkout').style.display = 'block';
+            document.getElementById('cart-summary').innerText = cart.map(c => c.name).join(', ');
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('total-price').innerText = total.toLocaleString();
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !phone || !address || cart.length === 0) {
+                alert('ကျေးဇူးပြု၍ အချက်အလက်များကို အပြည့်အစုံ ဖြည့်စွက်ပါ!');
+                return;
+            }
+
+            const orderData = {
+                items: cart,
+                total: cart.reduce((sum, item) => sum + item.price, 0),
+                customer: { name, phone, address }
+            };
+
+            // Telegram Bot ထံသို့ အချက်အလက်များ လှမ်းပို့ခြင်း
+            tg.sendData(JSON.stringify(orderData));
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>

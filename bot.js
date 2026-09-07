@@ -16,7 +16,7 @@ bot.onText(/\/start/, (msg) => {
             keyboard: [[
                 {
                     text: "🛍️ Open Shop",
-                    web_app: { url: "https://github.com/shinkhant17304/O_shop_project.git" } // သင့် Vercel Link အစားထိုးပါ
+                    web_app: { url: "https://shinkhant17304.github.io/O_shop_project/" } // သင့် Vercel Link အစားထိုးပါ
                 }
             ]],
             resize_keyboard: true

@@ -80,23 +80,31 @@
         }
 
         function submitOrder() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const address = document.getElementById('address').value;
+            try {
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
         
-            if (!name || !phone || !address || cart.length === 0) {
-                alert('ကျေးဇူးပြု၍ အချက်အလက်များကို အပြည့်အစုံ ဖြည့်စွက်ပါ!');
-                return;
+                if (!name || !phone || !address || cart.length === 0) {
+                    alert('ကျေးဇူးပြု၍ အချက်အလက်များကို အပြည့်အစုံ ဖြည့်စွက်ပါ!');
+                    return;
+                }
+        
+                const orderData = {
+                    items: cart,
+                    total: cart.reduce((sum, item) => sum + item.price, 0),
+                    customer: { name, phone, address }
+                };
+        
+                // ၁။ ဒေတာ ပို့ပေးခြင်း
+                tg.sendData(JSON.stringify(orderData));
+        
+                // ၂။ Window ကို အတင်းအကျပ် ပိတ်ခိုင်းခြင်း
+                tg.close();
+        
+            } catch (error) {
+                alert("အမှား ဖြစ်ပေါ်နေပါသည်: " + error.message);
             }
-        
-            const orderData = {
-                items: cart,
-                total: cart.reduce((sum, item) => sum + item.price, 0),
-                customer: { name, phone, address }
-            };
-        
-            // Telegram Bot ထံသို့ ဒေတာ ပို့ပေးခြင်း (tg.sendData က စာမျက်နှာကို အလိုအလျောက် ပိတ်ပေးပါမည်)
-            tg.sendData(JSON.stringify(orderData));
         }
 
         renderProducts();

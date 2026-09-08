@@ -4,7 +4,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const TOKEN = '8982203850:AAFWZQKhrYNBQix5qXJM0bv3J0-Fe_J1hUg';
 
 // ၂။ အထက်ပါ အဆင့် (၁) မှ ရရှိသော သင့် Telegram ID (ဥပမာ - 123456789)
-const ADMIN_CHAT_ID = '5486908';
+const ADMIN_CHAT_ID = '8704594334';
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 

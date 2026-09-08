@@ -43,7 +43,8 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Telegram Window ကို အပြည့်ဖွင့်မည်
+        tg.ready();
+        tg.expand(); 
 
         const products = [
             { id: 1, name: "T-Shirt", price: 15000, img: "https://via.placeholder.com/150" },
@@ -94,12 +95,8 @@
                 customer: { name, phone, address }
             };
         
-            // ၁။ Telegram Bot ထံသို့ ဒေတာ ပို့ပေးခြင်း
+            // Telegram Bot ထံသို့ ဒေတာ ပို့ပေးခြင်း (tg.sendData က စာမျက်နှာကို အလိုအလျောက် ပိတ်ပေးပါမည်)
             tg.sendData(JSON.stringify(orderData));
-        
-            // ၂။ ဝယ်ယူသူကို အသိပေးချက် ပြပြီး စာမျက်နှာကို ပိတ်လိုက်ခြင်း
-            alert('အော်ဒါ တင်ခြင်း အောင်မြင်ပါသည်။');
-            tg.close();
         }
 
         renderProducts();

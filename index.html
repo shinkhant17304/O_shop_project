@@ -82,20 +82,24 @@
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
             const address = document.getElementById('address').value;
-
+        
             if (!name || !phone || !address || cart.length === 0) {
                 alert('ကျေးဇူးပြု၍ အချက်အလက်များကို အပြည့်အစုံ ဖြည့်စွက်ပါ!');
                 return;
             }
-
+        
             const orderData = {
                 items: cart,
                 total: cart.reduce((sum, item) => sum + item.price, 0),
                 customer: { name, phone, address }
             };
-
-            // Telegram Bot ထံသို့ အချက်အလက်များ လှမ်းပို့ခြင်း
+        
+            // ၁။ Telegram Bot ထံသို့ ဒေတာ ပို့ပေးခြင်း
             tg.sendData(JSON.stringify(orderData));
+        
+            // ၂။ ဝယ်ယူသူကို အသိပေးချက် ပြပြီး စာမျက်နှာကို ပိတ်လိုက်ခြင်း
+            alert('အော်ဒါ တင်ခြင်း အောင်မြင်ပါသည်။');
+            tg.close();
         }
 
         renderProducts();

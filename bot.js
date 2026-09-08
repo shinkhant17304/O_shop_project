@@ -44,11 +44,15 @@ bot.onText(/\/start/, (msg) => {
 
 // ၅။ Web App မှ ပို့လိုက်သော အော်ဒါကို လက်ခံပြီး Database ထဲ သိမ်းဆည်းခြင်း
 bot.on('message', async (msg) => {
+    // ၁။ Telegram မှ မက်ဆေ့ဂျ် မည်သည့်အရာမဆို ရရှိပါက Terminal တွင် ပြခိုင်းခြင်း
+    console.log("📩 မက်ဆေ့ဂျ် ဝင်လာပါသည်:", msg.text || "Text မဟုတ်သော မက်ဆေ့ဂျ်");
+
     if (msg.web_app_data) {
+        console.log("📦 Web App မှ အော်ဒါ ဒေတာ ရရှိပါပြီ:", msg.web_app_data.data);
+
         try {
             const order = JSON.parse(msg.web_app_data.data);
             
-            // (က) Database ထဲသို့ အော်ဒါ သိမ်းဆည်းခြင်း
             const newOrder = new Order({
                 customerName: order.customer.name,
                 customerPhone: order.customer.phone,
@@ -57,25 +61,21 @@ bot.on('message', async (msg) => {
                 totalAmount: order.total
             });
             await newOrder.save();
-            console.log("💾 အော်ဒါကို Database ထဲသို့ အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!");
+            console.log("💾 MongoDB ထဲသို့ အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!");
 
-            // (ခ) မက်ဆေ့ဂျ် ပြင်ဆင်ခြင်း
             const itemList = order.items.map(i => `- ${i.name}: ${i.price} KS`).join('\n');
-            const message = `🚨 **အော်ဒါအသစ် ရရှိပါသည်! (DB တွင် သိမ်းပြီး)**\n\n` +
+            const message = `🚨 **အော်ဒါအသစ် ရရှိပါသည်!**\n\n` +
                             `👤 အမည်: ${order.customer.name}\n` +
                             `📞 ဖုန်း: ${order.customer.phone}\n` +
                             `📍 လိပ်စာ: ${order.customer.address}\n\n` +
                             `🛒 **ဝယ်ယူသည့် ပစ္စည်းများ:**\n${itemList}\n\n` +
                             `💰 **စုစုပေါင်း ကျသင့်ငွေ:** ${order.total.toLocaleString()} KS`;
 
-            // (ဂ) ဝယ်ယူသူထံ အကြောင်းကြားစာ ပို့ခြင်း
             bot.sendMessage(msg.chat.id, `ကျေးဇူးတင်ပါသည် ${order.customer.name}၊ သင့်အော်ဒါကို လက်ခံရရှိပါပြီ!`);
-            
-            // (ဃ) Admin ထံသို့ အော်ဒါအသေးစိတ် မက်ဆေ့ဂျ် ပို့ခြင်း
             bot.sendMessage(ADMIN_CHAT_ID, message, { parse_mode: 'Markdown' });
 
         } catch (e) {
-            console.error("Order save error:", e);
+            console.error("❌ Data သိမ်းဆည်းစဉ် အမှားဖြစ်သည်:", e);
         }
     }
 });

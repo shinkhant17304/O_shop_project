@@ -34,7 +34,8 @@ bot.onText(/\/start/, (msg) => {
             keyboard: [[
                 {
                     text: "🛍️ Open Shop",
-                    web_app: { url: "https://shinkhant17304.github.io/O_shop_project/" }
+                  
+                    web_app: { url: "https://shinkhant17304.github.io/O_shop_project/?v=2" }
                 }
             ]],
             resize_keyboard: true
